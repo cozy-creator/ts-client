@@ -15,14 +15,14 @@ export class CozyCreator extends runtime.BaseAPI {
   }
 
   public get file() {
-    return this.#file;
+    return this.#fileApi;
   }
 
   public get workflow() {
-    return this.#workflow;
+    return this.#workflowApi;
   }
 
   public get generation() {
-    return this.#generation;
+    return this.#generationApi;
   }
 }
