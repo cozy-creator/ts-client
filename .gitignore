@@ -1,0 +1,4 @@
+.openapi-generator
+.openapi-generator-ignore
+
+node_modules
