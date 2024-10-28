@@ -59,6 +59,10 @@ export class WorkflowApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["X-API-Key"] = await this.configuration.apiKey("X-API-Key"); // APIKeyHeader authentication
+        }
+
         const response = await this.request({
             path: `/workflow/execute`,
             method: 'POST',
@@ -94,6 +98,10 @@ export class WorkflowApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["X-API-Key"] = await this.configuration.apiKey("X-API-Key"); // APIKeyHeader authentication
+        }
 
         const response = await this.request({
             path: `/workflow/{id}/stream`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),

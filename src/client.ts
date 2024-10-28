@@ -1,23 +1,12 @@
 import * as runtime from "./runtime";
 import { FileApi, GenerationApi, WorkflowApi } from "./apis";
 
-interface CozyCreatorConstructorParameters
-  extends runtime.ConfigurationParameters {}
-
 export class CozyCreator extends runtime.BaseAPI {
   #fileApi: FileApi;
   #workflowApi: WorkflowApi;
   #generationApi: GenerationApi;
 
-  constructor(params: CozyCreatorConstructorParameters = {}) {
-    if (typeof params.apiKey != "string")
-      throw new Error("apiKey must be a string");
-
-    if (!params.headers) {
-      params.headers = {};
-    }
-
-    params.headers["X-API-Key"] = params.apiKey;
+  constructor(params?: runtime.ConfigurationParameters) {
     const configuration = new runtime.Configuration(params);
 
     super(configuration);

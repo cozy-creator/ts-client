@@ -40,6 +40,10 @@ export class FileApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["X-API-Key"] = await this.configuration.apiKey("X-API-Key"); // APIKeyHeader authentication
+        }
+
         const consumes: runtime.Consume[] = [
             { contentType: 'multipart/form-data' },
         ];
