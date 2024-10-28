@@ -2,3 +2,4 @@
 .openapi-generator-ignore
 
 node_modules
+dist

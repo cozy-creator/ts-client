@@ -24,7 +24,7 @@ export interface GenerateParams {
      * @type {string}
      * @memberof GenerateParams
      */
-    id: string;
+    id?: string;
     /**
      * A map of models to their respective values
      * @type {{ [key: string]: number; }}
@@ -61,13 +61,18 @@ export interface GenerateParams {
      * @memberof GenerateParams
      */
     outputFormat: string;
+    /**
+     * URL to send the generated output to (optional)
+     * @type {string}
+     * @memberof GenerateParams
+     */
+    webhookUrl?: string;
 }
 
 /**
  * Check if a given object implements the GenerateParams interface.
  */
 export function instanceOfGenerateParams(value: object): value is GenerateParams {
-    if (!('id' in value) || value['id'] === undefined) return false;
     if (!('models' in value) || value['models'] === undefined) return false;
     if (!('randomSeed' in value) || value['randomSeed'] === undefined) return false;
     if (!('aspectRatio' in value) || value['aspectRatio'] === undefined) return false;
@@ -86,13 +91,14 @@ export function GenerateParamsFromJSONTyped(json: any, ignoreDiscriminator: bool
     }
     return {
         
-        'id': json['id'],
+        'id': json['id'] == null ? undefined : json['id'],
         'models': json['models'],
         'randomSeed': json['random_seed'],
         'aspectRatio': json['aspect_ratio'],
         'positivePrompt': json['positive_prompt'],
         'negativePrompt': json['negative_prompt'] == null ? undefined : json['negative_prompt'],
         'outputFormat': json['output_format'],
+        'webhookUrl': json['webhook_url'] == null ? undefined : json['webhook_url'],
     };
 }
 
@@ -114,6 +120,7 @@ export function GenerateParamsFromJSONTyped(json: any, ignoreDiscriminator: bool
         'positive_prompt': value['positivePrompt'],
         'negative_prompt': value['negativePrompt'],
         'output_format': value['outputFormat'],
+        'webhook_url': value['webhookUrl'],
     };
 }
 

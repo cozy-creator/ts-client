@@ -20,11 +20,17 @@ import { mapValues } from '../runtime';
  */
 export interface GeneratedOutput {
     /**
-     * The generated output data (e.g., image file, etc.)
-     * @type {Blob}
+     * List of URLs where the generated images can be accessed
+     * @type {Array<string>}
      * @memberof GeneratedOutput
      */
-    data?: Blob;
+    urls?: Array<string>;
+    /**
+     * The model identifier used for the generated images
+     * @type {string}
+     * @memberof GeneratedOutput
+     */
+    model?: string;
 }
 
 /**
@@ -44,7 +50,8 @@ export function GeneratedOutputFromJSONTyped(json: any, ignoreDiscriminator: boo
     }
     return {
         
-        'data': json['data'] == null ? undefined : json['data'],
+        'urls': json['urls'] == null ? undefined : json['urls'],
+        'model': json['model'] == null ? undefined : json['model'],
     };
 }
 
@@ -59,7 +66,8 @@ export function GeneratedOutputFromJSONTyped(json: any, ignoreDiscriminator: boo
 
     return {
         
-        'data': value['data'],
+        'urls': value['urls'],
+        'model': value['model'],
     };
 }
 
