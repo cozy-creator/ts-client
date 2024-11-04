@@ -1,30 +1,28 @@
-const { CozyCreator } = require("../dist");
+import { CozyCreator, SubmitJobContentTypeEnum, JobRequestAspectRatioEnum, JobRequestOutputFormatEnum } from "@cozy-creator/gen-server-ts-client";
 
 const cozy = new CozyCreator({
-  basePath: "http://localhost:9009/api/v1",
+  basePath: "http://localhost:8881/v1",
   apiKey: "LtozVIUp9dAvfZSe6HAWCDZWtJfP1uTC",
 });
 
 async function generate() {
   try {
     const data = {
-      generateParams: {
+      contentType: SubmitJobContentTypeEnum.Json,
+      jobRequest: {
         webhookUrl: "https://webhook.site/a433f22f-028a-4da9-b435-619d8f4cd141",
-        positivePrompt: "A photo of a cat",
+        positivePrompt: "Splatoon characters, anime style, highly detailed, colorful",
         models: { sdxl: 2 },
-        aspectRatio: "1/1",
-        outputFormat: "png",
-        randomSeed: 4,
+        aspectRatio: JobRequestAspectRatioEnum._11,
+        outputFormat: JobRequestOutputFormatEnum.Webp,
+        randomSeed: 123,
       },
     };
 
-    console.log(data);
-
-    const response = await cozy.generation.generateAsync(data);
+    const response = await cozy.generation.submitJob(data);
     console.log(response);
-  } catch (e) {
+  } catch (e: unknown) {
     // handle error
-
     console.log(e);
   }
 }

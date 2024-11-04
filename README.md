@@ -9,23 +9,24 @@ yarn add @cozy-creator/gen-server-ts-client
 Use the client like this:
 
 ```typescript
-import { CozyCreator } from "@cozy-creator/gen-server-ts-client";
+import { CozyCreator, SubmitJobContentTypeEnum, JobRequestAspectRatioEnum, JobRequestOutputFormatEnum } from "@cozy-creator/gen-server-ts-client";
 
 const cozy = new CozyCreator({
-  basePath: "http://localhost:9009/api/v1",
+  basePath: "http://localhost:8881/v1",
   apiKey: "LtozVIUp9dAvfZSe6HAWCDZWtJfP1uTC",
 });
 
 const data = {
-  generateParams: {
+    contentType: SubmitJobContentTypeEnum.Json,
+    jobRequest: {
     webhookUrl: "https://webhook.site/a433f22f-028a-4da9-b435-619d8f4cd141",
     positivePrompt: "Splatoon characters, anime style, highly detailed, colorful",
-    models: { "flux-schnell": 4 },
-    aspectRatio: "1/1",
-    outputFormat: "webp",
+    models: { sdxl: 2 },
+    aspectRatio: JobRequestAspectRatioEnum._11,
+    outputFormat: JobRequestOutputFormatEnum.Webp,
     randomSeed: 123,
-  },
+    },
 };
 
-const response = await cozy.generation.generateAsync(data);
+const response = await cozy.generation.submitJob(data);
 ```
