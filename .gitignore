@@ -5,3 +5,5 @@ dist
 
 **/.openapi-generator
 openapi-tools.json
+
+.typescript-client
