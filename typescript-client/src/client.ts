@@ -1,10 +1,10 @@
 import * as runtime from "./runtime";
 import { FileApi, WorkflowApi } from "./apis";
-import { GenerationApiWrapper } from "./apis/GenerationApiWrapper";
+import { GenerationApi } from "./apis/";
 
 export class CozyCreator extends runtime.BaseAPI {
   #fileApi: FileApi;
-  #generationApi: GenerationApiWrapper;
+  #generationApi: GenerationApi;
   #workflowApi: WorkflowApi;
 
   constructor(params?: runtime.ConfigurationParameters) {
@@ -12,7 +12,7 @@ export class CozyCreator extends runtime.BaseAPI {
     super(configuration);
 
     this.#fileApi = new FileApi(this.configuration);
-    this.#generationApi = new GenerationApiWrapper(this.configuration);
+    this.#generationApi = new GenerationApi(this.configuration);
     this.#workflowApi = new WorkflowApi(this.configuration);
   }
 
