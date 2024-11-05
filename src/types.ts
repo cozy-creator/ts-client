@@ -85,3 +85,18 @@ export interface WorkflowOutput {
   output: NodeOutput;
   error?: string | null;
 }
+
+export type EventType = "open" | "message" | "error";
+
+export interface EventSourceInitDict {
+  rejectUnauthorized?: boolean;
+  withCredentials?: boolean;
+  headers?: HeadersInit;
+  method?: string;
+  retry?: number;
+  body?: any;
+}
+
+export interface MessageEventListener {
+  (evt: MessageEvent): void;
+}

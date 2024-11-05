@@ -1,10 +1,8 @@
-import * as msgpack from "@msgpack/msgpack";
-// import * as FormData from "form-data";
-
-import { Readable } from "stream";
+import msgpack from "@msgpack/msgpack";
 import { FileEndpoint } from "./endpoints/file";
 import { WorkflowEndpoint } from "./endpoints/workflow";
-import { GenerationEndpoint } from "./endpoints/generation";
+import { JobsEndpoint } from "./endpoints/jobs";
+import { mergeHeaders } from "./utils";
 
 interface Options {
   apiKey?: string;
@@ -25,7 +23,7 @@ export class CozyCreator {
 
   public file: FileEndpoint;
   public workflow: WorkflowEndpoint;
-  public generation: GenerationEndpoint;
+  public jobs: JobsEndpoint;
 
   constructor(options: Options = {}) {
     const apiKey = options.apiKey || process.env.COZY_API_KEY;
@@ -44,26 +42,29 @@ export class CozyCreator {
     }
 
     this.file = new FileEndpoint(this);
+    this.jobs = new JobsEndpoint(this);
     this.workflow = new WorkflowEndpoint(this);
-    this.generation = new GenerationEndpoint(this);
   }
 
   _prepareHeaders(customHeaders?: HeadersInit): Headers {
-    const headers = new Headers(customHeaders);
-    for (const [key, value] of this._defaultHeaders.entries()) {
-      headers.set(key, value);
-    }
+    const headers = mergeHeaders(
+      new Headers(customHeaders),
+      this._defaultHeaders
+    );
 
-    headers["Accept"] = headers["Accept"] || "application/json";
-    headers["Content-Type"] = headers["Content-Type"] || "application/json";
+    const accept = headers.get("Accept") || "application/json";
+    const contentType = headers.get("Content-Type") || "application/json";
+
+    headers.set("Accept", accept);
+    headers.set("Content-Type", contentType);
     return headers;
   }
 
   async _serializeData(
     data: any,
-    contentType: string
+    contentType = this.defaultHeaders.get("Content-Type")
   ): Promise<Uint8Array | string> {
-    if (MSG_PACK_HEADERS.includes(contentType)) {
+    if (MSG_PACK_HEADERS.includes(contentType!)) {
       if (data instanceof Uint8Array) {
         return data;
       }
@@ -90,16 +91,7 @@ export class CozyCreator {
     } else if (contentType.includes("application/vnd.msgpack")) {
       const buffer = await response.arrayBuffer();
       return msgpack.decode(new Uint8Array(buffer)) as T;
-    }
-    // else if (contentType.includes("application/octet-stream")) {
-    //   // Handle streaming output as an async iterable
-    //   const stream = response.body;
-    //   if (!stream) {
-    //     throw new Error("Response body is null");
-    //   }
-    //   return stream as unknown as T;
-    // }
-    else {
+    } else {
       throw new Error(`Unsupported response Content-Type: ${contentType}`);
     }
   }

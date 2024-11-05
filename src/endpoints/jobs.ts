@@ -1,16 +1,15 @@
-import { Readable } from "stream";
-import { EventSourceInitDict } from "../eventsource";
 import {
   JobStatusResponse,
   JobResult,
   JobStreamEvent,
   JobRequest,
   RequestOptions,
+  EventSourceInitDict,
 } from "../types";
 import { CozyCreator } from "..";
 import { mergeHeaders } from "../utils";
 
-export class GenerationEndpoint {
+export class JobsEndpoint {
   private api: CozyCreator;
 
   constructor(api: CozyCreator) {
@@ -44,10 +43,10 @@ export class GenerationEndpoint {
    * Retrieves the current status of a job.
    */
   async getJobStatus(
-    jobId: string,
+    id: string,
     options: RequestOptions = {}
   ): Promise<JobStatusResponse> {
-    const url = `${this.api.baseUrl}/jobs/${encodeURIComponent(jobId)}/status`;
+    const url = `${this.api.baseUrl}/jobs/${id}/status`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const response = await fetch(url, {
@@ -62,10 +61,10 @@ export class GenerationEndpoint {
    * Retrieves the completed image result of a job.
    */
   async getJobResult(
-    jobId: string,
+    id: string,
     options: RequestOptions = {}
   ): Promise<JobResult | AsyncIterable<JobResult>> {
-    const url = `${this.api.baseUrl}/jobs/${encodeURIComponent(jobId)}/result`;
+    const url = `${this.api.baseUrl}/jobs/${id}/result`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const response = await fetch(url, { method: "GET", headers });
@@ -79,7 +78,7 @@ export class GenerationEndpoint {
     id: string,
     options: RequestOptions = {}
   ): AsyncGenerator<JobStreamEvent | Event> {
-    const url = `${this.api.baseUrl}/jobs/${id}/stream-events`;
+    const url = `${this.api.baseUrl}/jobs/${id}/stream`;
     const headers = mergeHeaders(
       this.api.defaultHeaders,
       new Headers(options.headers)
@@ -159,33 +158,6 @@ export class GenerationEndpoint {
       } else {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
-    }
-  }
-
-  /**
-   * Parses a JSON streaming response into an AsyncIterable.
-   */
-  private async *_parseJSONStream(
-    stream: NodeJS.ReadableStream
-  ): AsyncIterable<JobResult> {
-    const reader = Readable.from(stream);
-    let buffer = "";
-
-    for await (const chunk of reader) {
-      buffer += chunk.toString();
-      let boundary = buffer.indexOf("\n");
-      while (boundary !== -1) {
-        const line = buffer.slice(0, boundary);
-        buffer = buffer.slice(boundary + 1);
-        if (line.trim()) {
-          yield JSON.parse(line);
-        }
-        boundary = buffer.indexOf("\n");
-      }
-    }
-
-    if (buffer.trim()) {
-      yield JSON.parse(buffer);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Decoder, encode } from "@msgpack/msgpack";
+import { MessageEventListener, EventSourceInitDict, EventType } from "./types";
 
 class MessageEvent extends Event {
   data?: any = "";
@@ -9,21 +10,6 @@ class MessageEvent extends Event {
     this.data = options.data || "";
     this.lastEventId = options.lastEventId || "";
   }
-}
-
-type EventType = "open" | "message" | "error";
-
-export interface EventSourceInitDict {
-  rejectUnauthorized?: boolean;
-  withCredentials?: boolean;
-  headers?: HeadersInit;
-  method?: string;
-  retry?: number;
-  body?: any;
-}
-
-interface MessageEventListener {
-  (evt: MessageEvent): void;
 }
 
 export class EventSource {

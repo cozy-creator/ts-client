@@ -1,7 +1,7 @@
 import { CozyCreator } from "..";
 import { RequestOptions, UploadResponse } from "../types";
-import FormData from "form-data";
 import { mergeHeaders } from "../utils";
+import FormData from "form-data";
 
 export class FileEndpoint {
   private api: CozyCreator;

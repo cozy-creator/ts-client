@@ -1,10 +1,10 @@
 import { CozyCreator } from "..";
-import { EventSourceInitDict } from "../eventsource";
 import {
-  RequestOptions,
   Workflow,
+  RequestOptions,
   WorkflowOutput,
   WorkflowResponse,
+  EventSourceInitDict,
 } from "../types";
 import { mergeHeaders } from "../utils";
 
@@ -27,7 +27,7 @@ export class WorkflowEndpoint {
 
     const body = await this.api._serializeData(
       workflow,
-      headers.get("Content-Type")!
+      headers.get("Content-Type")
     );
     const response = await fetch(url, {
       method: "POST",
