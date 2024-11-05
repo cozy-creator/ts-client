@@ -27,9 +27,34 @@ export interface UploadFileRequest {
 }
 
 /**
+ * FileApi - interface
+ * 
+ * @export
+ * @interface FileApiInterface
+ */
+export interface FileApiInterface {
+    /**
+     * This endpoint uploads a file using a form-data request with the key `file`.
+     * @summary Uploads a file to the server
+     * @param {Blob} [file] The file to upload
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FileApiInterface
+     */
+    uploadFileRaw(requestParameters: UploadFileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UploadResponse>>;
+
+    /**
+     * This endpoint uploads a file using a form-data request with the key `file`.
+     * Uploads a file to the server
+     */
+    uploadFile(requestParameters: UploadFileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UploadResponse>;
+
+}
+
+/**
  * 
  */
-export class FileApi extends runtime.BaseAPI {
+export class FileApi extends runtime.BaseAPI implements FileApiInterface {
 
     /**
      * This endpoint uploads a file using a form-data request with the key `file`.

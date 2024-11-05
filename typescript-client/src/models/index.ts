@@ -7,6 +7,7 @@ export * from './JobStatusResponse';
 export * from './JobStreamEvent';
 export * from './JobStreamEventData';
 export * from './Node';
+export * from './NodeOutput';
 export * from './UploadResponse';
 export * from './UploadResponseData';
 export * from './Workflow';

@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime';
+import type { NodeOutput } from './NodeOutput';
+import {
+    NodeOutputFromJSON,
+    NodeOutputFromJSONTyped,
+    NodeOutputToJSON,
+    NodeOutputToJSONTyped,
+} from './NodeOutput';
+
 /**
  * 
  * @export
@@ -32,11 +40,11 @@ export interface WorkflowOutput {
      */
     nodeType?: string;
     /**
-     * 
-     * @type {{ [key: string]: object; }}
+     * The output of the node
+     * @type {NodeOutput}
      * @memberof WorkflowOutput
      */
-    output?: { [key: string]: object; };
+    output?: NodeOutput;
     /**
      * An error message, if any
      * @type {string}
@@ -64,7 +72,7 @@ export function WorkflowOutputFromJSONTyped(json: any, ignoreDiscriminator: bool
         
         'nodeID': json['nodeID'] == null ? undefined : json['nodeID'],
         'nodeType': json['nodeType'] == null ? undefined : json['nodeType'],
-        'output': json['output'] == null ? undefined : json['output'],
+        'output': json['output'] == null ? undefined : NodeOutputFromJSON(json['output']),
         'error': json['error'] == null ? undefined : json['error'],
     };
 }
@@ -82,7 +90,7 @@ export function WorkflowOutputFromJSONTyped(json: any, ignoreDiscriminator: bool
         
         'nodeID': value['nodeID'],
         'nodeType': value['nodeType'],
-        'output': value['output'],
+        'output': NodeOutputToJSON(value['output']),
         'error': value['error'],
     };
 }

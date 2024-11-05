@@ -18,7 +18,6 @@ import type {
   JobRequest,
   JobResult,
   JobStatusResponse,
-  JobStreamEvent,
 } from '../models/index';
 import {
     JobRequestFromJSON,
@@ -27,8 +26,6 @@ import {
     JobResultToJSON,
     JobStatusResponseFromJSON,
     JobStatusResponseToJSON,
-    JobStreamEventFromJSON,
-    JobStreamEventToJSON,
 } from '../models/index';
 
 export interface GetJobResultRequest {
@@ -59,9 +56,102 @@ export interface SubmitJobRequest {
 }
 
 /**
+ * GenerationApi - interface
+ * 
+ * @export
+ * @interface GenerationApiInterface
+ */
+export interface GenerationApiInterface {
+    /**
+     * 
+     * @summary Retrieve the completed image result of a job
+     * @param {string} id The job ID
+     * @param {'application/json' | 'application/vnd.msgpack'} [accept] Format the client wants to receive (defaults to JSON)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GenerationApiInterface
+     */
+    getJobResultRaw(requestParameters: GetJobResultRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobResult>>;
+
+    /**
+     * Retrieve the completed image result of a job
+     */
+    getJobResult(requestParameters: GetJobResultRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobResult>;
+
+    /**
+     * 
+     * @summary Retrieve the current status of a job
+     * @param {string} id The job ID
+     * @param {'application/json' | 'application/vnd.msgpack'} [accept] Format the client wants to receive (defaults to JSON)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GenerationApiInterface
+     */
+    getJobStatusRaw(requestParameters: GetJobStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobStatusResponse>>;
+
+    /**
+     * Retrieve the current status of a job
+     */
+    getJobStatus(requestParameters: GetJobStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobStatusResponse>;
+
+    /**
+     * Get the event-stream produced by a job. Starts the event stream from the beginning.
+     * @summary Stream events for a specific job
+     * @param {string} id The job ID
+     * @param {'text/event-stream' | 'application/vnd.msgpack-stream'} [accept] Format the client wants to receive (defaults to msgpack stream)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GenerationApiInterface
+     */
+    streamJobEventsRaw(requestParameters: StreamJobEventsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>>;
+
+    /**
+     * Get the event-stream produced by a job. Starts the event stream from the beginning.
+     * Stream events for a specific job
+     */
+    streamJobEvents(requestParameters: StreamJobEventsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string>;
+
+    /**
+     * Submit a job and also returns an event-stream object (async iterable)
+     * @summary Submit a job and stream its events
+     * @param {'application/json' | 'application/vnd.msgpack'} contentType Format of the data being sent
+     * @param {JobRequest} jobRequest 
+     * @param {'text/event-stream' | 'application/vnd.msgpack-stream'} [accept] Format the client wants to receive (defaults to msgpack stream)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GenerationApiInterface
+     */
+    submitAndStreamJobRaw(requestParameters: SubmitAndStreamJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>>;
+
+    /**
+     * Submit a job and also returns an event-stream object (async iterable)
+     * Submit a job and stream its events
+     */
+    submitAndStreamJob(requestParameters: SubmitAndStreamJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string>;
+
+    /**
+     * 
+     * @summary Submit a new job to generate images
+     * @param {'application/json' | 'application/vnd.msgpack'} contentType Format of the data being sent
+     * @param {JobRequest} jobRequest 
+     * @param {'application/json' | 'application/vnd.msgpack'} [accept] Format the client wants to receive (defaults to JSON)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GenerationApiInterface
+     */
+    submitJobRaw(requestParameters: SubmitJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobStatusResponse>>;
+
+    /**
+     * Submit a new job to generate images
+     */
+    submitJob(requestParameters: SubmitJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobStatusResponse>;
+
+}
+
+/**
  * 
  */
-export class GenerationApi extends runtime.BaseAPI {
+export class GenerationApi extends runtime.BaseAPI implements GenerationApiInterface {
 
     /**
      * Retrieve the completed image result of a job
@@ -149,7 +239,7 @@ export class GenerationApi extends runtime.BaseAPI {
      * Get the event-stream produced by a job. Starts the event stream from the beginning.
      * Stream events for a specific job
      */
-    async streamJobEventsRaw(requestParameters: StreamJobEventsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobStreamEvent>> {
+    async streamJobEventsRaw(requestParameters: StreamJobEventsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
@@ -176,14 +266,18 @@ export class GenerationApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => JobStreamEventFromJSON(jsonValue));
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<string>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
     }
 
     /**
      * Get the event-stream produced by a job. Starts the event stream from the beginning.
      * Stream events for a specific job
      */
-    async streamJobEvents(requestParameters: StreamJobEventsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobStreamEvent> {
+    async streamJobEvents(requestParameters: StreamJobEventsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
         const response = await this.streamJobEventsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -192,7 +286,7 @@ export class GenerationApi extends runtime.BaseAPI {
      * Submit a job and also returns an event-stream object (async iterable)
      * Submit a job and stream its events
      */
-    async submitAndStreamJobRaw(requestParameters: SubmitAndStreamJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobStreamEvent>> {
+    async submitAndStreamJobRaw(requestParameters: SubmitAndStreamJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
         if (requestParameters['contentType'] == null) {
             throw new runtime.RequiredError(
                 'contentType',
@@ -211,7 +305,7 @@ export class GenerationApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/x-msgpack';
+        headerParameters['Content-Type'] = 'application/vnd.msgpack';
 
         if (requestParameters['accept'] != null) {
             headerParameters['Accept'] = String(requestParameters['accept']);
@@ -233,14 +327,18 @@ export class GenerationApi extends runtime.BaseAPI {
             body: JobRequestToJSON(requestParameters['jobRequest']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => JobStreamEventFromJSON(jsonValue));
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<string>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
     }
 
     /**
      * Submit a job and also returns an event-stream object (async iterable)
      * Submit a job and stream its events
      */
-    async submitAndStreamJob(requestParameters: SubmitAndStreamJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobStreamEvent> {
+    async submitAndStreamJob(requestParameters: SubmitAndStreamJobRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
         const response = await this.submitAndStreamJobRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -267,7 +365,7 @@ export class GenerationApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/x-msgpack';
+        headerParameters['Content-Type'] = 'application/vnd.msgpack';
 
         if (requestParameters['accept'] != null) {
             headerParameters['Accept'] = String(requestParameters['accept']);
@@ -307,7 +405,7 @@ export class GenerationApi extends runtime.BaseAPI {
  */
 export const GetJobResultAcceptEnum = {
     Json: 'application/json',
-    XMsgpack: 'application/x-msgpack'
+    VndMsgpack: 'application/vnd.msgpack'
 } as const;
 export type GetJobResultAcceptEnum = typeof GetJobResultAcceptEnum[keyof typeof GetJobResultAcceptEnum];
 /**
@@ -315,7 +413,7 @@ export type GetJobResultAcceptEnum = typeof GetJobResultAcceptEnum[keyof typeof 
  */
 export const GetJobStatusAcceptEnum = {
     Json: 'application/json',
-    XMsgpack: 'application/x-msgpack'
+    VndMsgpack: 'application/vnd.msgpack'
 } as const;
 export type GetJobStatusAcceptEnum = typeof GetJobStatusAcceptEnum[keyof typeof GetJobStatusAcceptEnum];
 /**
@@ -323,7 +421,7 @@ export type GetJobStatusAcceptEnum = typeof GetJobStatusAcceptEnum[keyof typeof 
  */
 export const StreamJobEventsAcceptEnum = {
     TextEventStream: 'text/event-stream',
-    ApplicationXMsgpackStream: 'application/x-msgpack-stream'
+    ApplicationVndMsgpackStream: 'application/vnd.msgpack-stream'
 } as const;
 export type StreamJobEventsAcceptEnum = typeof StreamJobEventsAcceptEnum[keyof typeof StreamJobEventsAcceptEnum];
 /**
@@ -331,7 +429,7 @@ export type StreamJobEventsAcceptEnum = typeof StreamJobEventsAcceptEnum[keyof t
  */
 export const SubmitAndStreamJobContentTypeEnum = {
     Json: 'application/json',
-    XMsgpack: 'application/x-msgpack'
+    VndMsgpack: 'application/vnd.msgpack'
 } as const;
 export type SubmitAndStreamJobContentTypeEnum = typeof SubmitAndStreamJobContentTypeEnum[keyof typeof SubmitAndStreamJobContentTypeEnum];
 /**
@@ -339,7 +437,7 @@ export type SubmitAndStreamJobContentTypeEnum = typeof SubmitAndStreamJobContent
  */
 export const SubmitAndStreamJobAcceptEnum = {
     TextEventStream: 'text/event-stream',
-    ApplicationXMsgpackStream: 'application/x-msgpack-stream'
+    ApplicationVndMsgpackStream: 'application/vnd.msgpack-stream'
 } as const;
 export type SubmitAndStreamJobAcceptEnum = typeof SubmitAndStreamJobAcceptEnum[keyof typeof SubmitAndStreamJobAcceptEnum];
 /**
@@ -347,7 +445,7 @@ export type SubmitAndStreamJobAcceptEnum = typeof SubmitAndStreamJobAcceptEnum[k
  */
 export const SubmitJobContentTypeEnum = {
     Json: 'application/json',
-    XMsgpack: 'application/x-msgpack'
+    VndMsgpack: 'application/vnd.msgpack'
 } as const;
 export type SubmitJobContentTypeEnum = typeof SubmitJobContentTypeEnum[keyof typeof SubmitJobContentTypeEnum];
 /**
@@ -355,6 +453,6 @@ export type SubmitJobContentTypeEnum = typeof SubmitJobContentTypeEnum[keyof typ
  */
 export const SubmitJobAcceptEnum = {
     Json: 'application/json',
-    XMsgpack: 'application/x-msgpack'
+    VndMsgpack: 'application/vnd.msgpack'
 } as const;
 export type SubmitJobAcceptEnum = typeof SubmitJobAcceptEnum[keyof typeof SubmitJobAcceptEnum];

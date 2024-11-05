@@ -1,5 +1,7 @@
 .openapi-generator
-.openapi-generator-ignore
 
 node_modules
 dist
+
+**/.openapi-generator
+openapi-tools.json

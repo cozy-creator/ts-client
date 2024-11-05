@@ -37,9 +37,50 @@ export interface StreamWorkflowRequest {
 }
 
 /**
+ * WorkflowApi - interface
+ * 
+ * @export
+ * @interface WorkflowApiInterface
+ */
+export interface WorkflowApiInterface {
+    /**
+     * This endpoint executes a workflow consisting of multiple nodes.
+     * @summary Executes a workflow
+     * @param {Workflow} workflow 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof WorkflowApiInterface
+     */
+    executeWorkflowRaw(requestParameters: ExecuteWorkflowRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WorkflowResponse>>;
+
+    /**
+     * This endpoint executes a workflow consisting of multiple nodes.
+     * Executes a workflow
+     */
+    executeWorkflow(requestParameters: ExecuteWorkflowRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WorkflowResponse>;
+
+    /**
+     * This endpoint returns Server-Sent Events (SSE) for streaming the output of a workflow identified by the given ID.
+     * @summary Streams the workflow output for the given workflow ID
+     * @param {string} id The unique ID of the workflow to stream
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof WorkflowApiInterface
+     */
+    streamWorkflowRaw(requestParameters: StreamWorkflowRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<JobStreamEvent>>;
+
+    /**
+     * This endpoint returns Server-Sent Events (SSE) for streaming the output of a workflow identified by the given ID.
+     * Streams the workflow output for the given workflow ID
+     */
+    streamWorkflow(requestParameters: StreamWorkflowRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<JobStreamEvent>;
+
+}
+
+/**
  * 
  */
-export class WorkflowApi extends runtime.BaseAPI {
+export class WorkflowApi extends runtime.BaseAPI implements WorkflowApiInterface {
 
     /**
      * This endpoint executes a workflow consisting of multiple nodes.
@@ -57,7 +98,7 @@ export class WorkflowApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/x-msgpack';
+        headerParameters['Content-Type'] = 'application/vnd.msgpack';
 
         if (this.configuration && this.configuration.apiKey) {
             headerParameters["X-API-Key"] = await this.configuration.apiKey("X-API-Key"); // APIKeyHeader authentication

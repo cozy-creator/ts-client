@@ -1,0 +1,5 @@
+# We needed to implement some files manually to get streaming to work
+
+src/apis/CustomGenerationApi.ts
+src/apis/GenerationApiWrapper.ts
+

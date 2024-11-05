@@ -1,0 +1,48 @@
+import * as runtime from "./runtime";
+{{#apiInfo}}
+import { {{#apis}}{{#-first}}FileApi, WorkflowApi{{/-first}}{{/apis}} } from "./apis";
+import { GenerationApiWrapper } from "./apis/GenerationApiWrapper";
+{{/apiInfo}}
+
+export class CozyCreator extends runtime.BaseAPI {
+  {{#apiInfo}}
+  {{#apis}}
+  {{#-first}}
+  #fileApi: FileApi;
+  #generationApi: GenerationApiWrapper;
+  #workflowApi: WorkflowApi;
+  {{/-first}}
+  {{/apis}}
+  {{/apiInfo}}
+
+  constructor(params?: runtime.ConfigurationParameters) {
+    const configuration = new runtime.Configuration(params);
+    super(configuration);
+
+    {{#apiInfo}}
+    {{#apis}}
+    {{#-first}}
+    this.#fileApi = new FileApi(this.configuration);
+    this.#generationApi = new GenerationApiWrapper(this.configuration);
+    this.#workflowApi = new WorkflowApi(this.configuration);
+    {{/-first}}
+    {{/apis}}
+    {{/apiInfo}}
+  }
+
+  {{#apiInfo}}
+  {{#apis}}
+  {{#-first}}
+  public get file() {
+    return this.#fileApi;
+  }
+  public get generation() {
+    return this.#generationApi;
+  }
+  public get workflow() {
+    return this.#workflowApi;
+  }
+  {{/-first}}
+  {{/apis}}
+  {{/apiInfo}}
+}
