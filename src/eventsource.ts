@@ -97,6 +97,8 @@ export class EventSource {
 
     const evt = ("on" + event.type) as `on${EventType}`;
     const handler = this[evt] as EventListener | MessageEventListener | null;
+
+    // @ts-expect-error
     handler?.call(this, event);
   }
 

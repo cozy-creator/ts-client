@@ -102,10 +102,13 @@ export class JobsEndpoint {
     );
 
     headers.set("Accept", "text/event-stream");
-    headers.set("Content-Type", headers["Content-Type"] || "application/json");
+    headers.set(
+      "Content-Type",
+      headers.get("Content-Type") || "application/json"
+    );
     const body = await this.api._serializeData(
       jobRequest,
-      headers["Content-Type"]
+      headers.get("Content-Type")
     );
 
     yield* this._eventSourceGenerator<JobStreamEvent>(

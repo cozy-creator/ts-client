@@ -1,4 +1,4 @@
-import msgpack from "@msgpack/msgpack";
+import * as msgpack from "@msgpack/msgpack";
 import { FileEndpoint } from "./endpoints/file";
 import { WorkflowEndpoint } from "./endpoints/workflow";
 import { JobsEndpoint } from "./endpoints/jobs";
