@@ -1,90 +1,49 @@
+import { z } from "zod";
+import {
+  aspectRatio,
+  jobResult,
+  jobStatus,
+  jobStatusResponse,
+  jobStreamEvent,
+  jobStreamEventType,
+  node,
+  nodeOutput,
+  outputFormat,
+  text2ImageRequest,
+  uploadResponse,
+  workflow,
+  workflowOutput,
+  workflowResponse,
+} from "./schema";
+
 /* Request and Response Options */
 export interface RequestOptions {
   headers?: HeadersInit;
 }
 
-type UUID = string;
+export type JobStreamEventType = z.infer<typeof jobStreamEventType>;
+export type OutputFormat = z.infer<typeof outputFormat>;
+export type JobStatus = z.infer<typeof jobStatus>;
+export type AspectRatio = z.infer<typeof aspectRatio>;
 
-export type JobStreamEventType = "status" | "output" | "error";
-export type OutputFormat = "jpg" | "png" | "webp";
-export type WorkStatus = "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELED";
-export type AspectRatio =
-  | "21/9"
-  | "16/9"
-  | "4/3"
-  | "1/1"
-  | "3/4"
-  | "9/16"
-  | "9/21";
+export type Text2ImageRequest = z.infer<typeof text2ImageRequest>;
+export type JobResult = z.infer<typeof jobResult>;
+export type JobStreamEvent = z.infer<typeof jobStreamEvent>;
+export type UploadResponse = z.infer<typeof uploadResponse>;
+export type Node = z.infer<typeof node>;
+export type JobStatusResponse = z.infer<typeof jobStatusResponse>;
+export type Workflow = z.infer<typeof workflow>;
+export type WorkflowResponse = z.infer<typeof workflowResponse>;
+export type NodeOutput = z.infer<typeof nodeOutput>;
+export type WorkflowOutput = z.infer<typeof workflowOutput>;
 
-export interface JobStatusResponse {
-  id: string;
-  status: WorkStatus;
-}
-
-export interface Text2ImageRequest {
-  models: { [key: string]: number };
-  random_seed?: number;
-  aspect_ratio?: AspectRatio;
-  positive_prompt: string;
-  negative_prompt?: string;
-  output_format?: OutputFormat;
-  webhook_url?: string;
-}
-
-export interface JobResult {
-  id: UUID;
-  status: WorkStatus;
-  input: Text2ImageRequest;
-  output: {
-    [modelName: string]: string[];
-  };
-  created_at: string; // ISO date-time
-  completed_at: string; // ISO date-time
-}
-
-export interface JobStreamEvent {
-  type: JobStreamEventType;
-  data: {
-    job_id: UUID;
-    url?: string;
-    model?: string;
-    status?: WorkStatus;
-    errorMessage?: string;
-  };
-}
-
-export interface UploadResponse {
-  status: string;
-  data: {
-    url: string;
-  };
-}
-
-export interface Node {
-  id: string;
-  type: string;
-}
-
-export interface Workflow {
-  id: string;
-  nodes: Node[];
-}
-
-export interface WorkflowResponse {
-  id: string;
-  status: string;
-}
-
-export interface NodeOutput {
+export type SSEEventType = "data" | "id" | "event" | "retry";
+export interface SSEEvent {
+  id?: string;
+  data?: string;
+  event?: string;
+  retry?: number;
   [key: string]: any;
-}
-
-export interface WorkflowOutput {
-  nodeID: string;
-  nodeType: string;
-  output: NodeOutput;
-  error?: string | null;
 }
 
 export type EventType = "open" | "message" | "error";

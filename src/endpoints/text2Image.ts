@@ -4,11 +4,11 @@ import {
   JobStreamEvent,
   Text2ImageRequest,
   RequestOptions,
-  EventSourceInitDict,
 } from "../types";
 import { CozyCreator } from "..";
 import { mergeHeaders } from "../utils";
 import { decode } from "msgpackr";
+import { jobStreamEvent } from "../schema";
 
 export class Text2ImageEndpoint {
   private api: CozyCreator;
@@ -92,7 +92,7 @@ export class Text2ImageEndpoint {
     const url = `${this.api.baseUrl}/jobs/${id}/stream`;
     yield* this._streamEvents(url, {
       method: "GET",
-      headers
+      headers,
     });
   }
 
@@ -116,7 +116,7 @@ export class Text2ImageEndpoint {
       headers.set("Accept", "application/vnd.msgpack");
     }
 
-    const url = `${this.api.baseUrl}/jobs/submit-and-stream-events`;
+    const url = `${this.api.baseUrl}/jobs/stream`;
     const body = await this.api._serializeData(
       request,
       headers.get("Content-Type")
@@ -125,7 +125,7 @@ export class Text2ImageEndpoint {
     yield* this._streamEvents(url, {
       method: "POST",
       headers,
-      body
+      body,
     });
   }
 
@@ -141,21 +141,23 @@ export class Text2ImageEndpoint {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     if (!response.body) {
-      throw new Error('Response body is null');
+      throw new Error("Response body is null");
     }
 
-    const acceptHeader = (
-      init.headers instanceof Headers && init.headers.get("Accept")
-    ) || "application/vnd.msgpack";
+    const acceptHeader =
+      (init.headers instanceof Headers && init.headers.get("Accept")) ||
+      "application/vnd.msgpack";
 
     const reader = response.body.getReader();
 
+    console.log("acceptHeader: ", acceptHeader);
+
     try {
-      if (acceptHeader.includes('text/event-stream')) {
+      if (acceptHeader.includes("text/event-stream")) {
         yield* this._handleSSEStream(reader);
-      } else if (acceptHeader?.includes('msgpack')) {
+      } else if (acceptHeader?.includes("msgpack")) {
         yield* this._handleMsgPackStream(reader);
       } else {
         throw new Error(`Unsupported Accept header: ${acceptHeader}`);
@@ -172,24 +174,24 @@ export class Text2ImageEndpoint {
     reader: ReadableStreamDefaultReader<Uint8Array>
   ): AsyncGenerator<JobStreamEvent> {
     const decoder = new TextDecoder();
-    let buffer = '';
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
       buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
 
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
+        if (line.startsWith("data: ")) {
           const data = line.slice(6);
-          if (data === '[DONE]') continue;
+          if (data === "[DONE]") continue;
           try {
             yield JSON.parse(data);
           } catch (e) {
-            console.warn('Failed to parse SSE data:', e);
+            console.warn("Failed to parse SSE data:", e);
           }
         }
       }
@@ -207,12 +209,11 @@ export class Text2ImageEndpoint {
       if (done) break;
 
       try {
-        const events = decode(value) as JobStreamEvent[];
-        for (const event of events) {
-          yield event;
-        }
+        if (done) break;
+        const decoded = decode(value);
+        yield jobStreamEvent.parse(decoded);
       } catch (e) {
-        console.warn('Failed to parse msgpack data:', e);
+        console.warn("Failed to parse msgpack data:", e);
       }
     }
   }
