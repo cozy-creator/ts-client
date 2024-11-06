@@ -1,0 +1,12 @@
+{
+  "name": "ts-client-examples",
+  "scripts": {
+    "demo": "cd .. && yarn build && cd examples && yarn install && ts-node src/submitAndStream.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.8.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
