@@ -19,7 +19,7 @@ export class JobsEndpoint {
   /**
    * Submits a new job to generate images.
    */
-  async submitJob(
+  async submit(
     jobRequest: JobRequest,
     options: RequestOptions = {}
   ): Promise<JobStatusResponse> {
@@ -42,7 +42,7 @@ export class JobsEndpoint {
   /**
    * Retrieves the current status of a job.
    */
-  async getJobStatus(
+  async getStatus(
     id: string,
     options: RequestOptions = {}
   ): Promise<JobStatusResponse> {
@@ -60,10 +60,10 @@ export class JobsEndpoint {
   /**
    * Retrieves the completed image result of a job.
    */
-  async getJobResult(
+  async getResult(
     id: string,
     options: RequestOptions = {}
-  ): Promise<JobResult | AsyncIterable<JobResult>> {
+  ): Promise<JobResult> {
     const url = `${this.api.baseUrl}/jobs/${id}/result`;
     const headers = this.api._prepareHeaders(options.headers);
 
@@ -74,7 +74,7 @@ export class JobsEndpoint {
   /**
    * Streams events for a specific job.
    */
-  async *streamJobEvents(
+  async *eventStream(
     id: string,
     options: RequestOptions = {}
   ): AsyncGenerator<JobStreamEvent | Event> {
@@ -91,7 +91,7 @@ export class JobsEndpoint {
   /**
    * Submits a job and streams its events.
    */
-  async *submitAndStreamJob(
+  async *submitWithEventStream(
     jobRequest: JobRequest,
     options: RequestOptions = {}
   ): AsyncGenerator<JobStreamEvent | Event> {

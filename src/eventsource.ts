@@ -1,4 +1,4 @@
-import { Decoder, encode } from "@msgpack/msgpack";
+import { encode, decode } from "msgpackr";
 import { MessageEventListener, EventSourceInitDict, EventType } from "./types";
 
 class MessageEvent extends Event {
@@ -183,14 +183,12 @@ export class EventSource {
     if (!stream) return;
 
     if (isMsgPack) {
-      const decoder = new Decoder();
       const asyncIterable = this._readableStreamToAsyncIterable(stream);
 
       const processStream = async () => {
         try {
-          const decodedStream = decoder.decodeStream(asyncIterable);
-          for await (const decodedValue of decodedStream) {
-            this._handleDecodedMessage(decodedValue);
+          for await (const event of asyncIterable) {
+            this._handleDecodedMessage(decode(event));
           }
         } catch (error) {
           console.error("Failed to decode MessagePack data", error);

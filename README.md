@@ -6,27 +6,40 @@ Add the client package to your project:
 yarn add @cozy-creator/gen-server-ts-client
 ```
 
-Use the client like this:
+Use the client in a simple polling script:
 
 ```typescript
-import { CozyCreator, SubmitJobContentTypeEnum, JobRequestAspectRatioEnum, JobRequestOutputFormatEnum } from "@cozy-creator/gen-server-ts-client";
+import { CozyCreator } from "@cozy-creator/ts-client";
 
 const cozy = new CozyCreator({
-  basePath: "http://localhost:8881/v1",
+  baseUrl: "http://localhost:8881/v1",
   apiKey: "LtozVIUp9dAvfZSe6HAWCDZWtJfP1uTC",
 });
 
-const data = {
-    contentType: SubmitJobContentTypeEnum.Json,
-    jobRequest: {
-    webhookUrl: "https://webhook.site/a433f22f-028a-4da9-b435-619d8f4cd141",
-    positivePrompt: "Splatoon characters, anime style, highly detailed, colorful",
-    models: { sdxl: 2 },
-    aspectRatio: JobRequestAspectRatioEnum._11,
-    outputFormat: JobRequestOutputFormatEnum.Webp,
-    randomSeed: 123,
-    },
-};
+async function main(): Promise<JobResult> {
+  const { id, status } = await cozy.jobs.submitJob({
+    models: { "stable-diffusion": 1 },
+    positive_prompt: 'A beautiful sunset over the ocean',
+    negative_prompt: '',
+    aspect_ratio: '16/9',
+    output_format: 'webp'
+  });
 
-const response = await cozy.generation.submitJob(data);
+  while (true) {
+    const { status } = await cozy.jobs.getJobStatus(id);
+
+    if (status === 'COMPLETED') {
+      return await cozy.jobs.getJobResult(id);
+    }
+
+    if (status === 'FAILED') {
+      throw new Error('Job failed');
+    }
+
+    // Poll every second
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+}
+
+main();
 ```

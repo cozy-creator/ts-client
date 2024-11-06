@@ -1,4 +1,4 @@
-import * as msgpack from "@msgpack/msgpack";
+import { encode, decode } from "msgpackr";
 import { FileEndpoint } from "./endpoints/file";
 import { WorkflowEndpoint } from "./endpoints/workflow";
 import { JobsEndpoint } from "./endpoints/jobs";
@@ -69,7 +69,7 @@ export class CozyCreator {
         return data;
       }
 
-      return msgpack.encode(data);
+      return encode(data);
     }
 
     if (typeof data === "object") {
@@ -90,7 +90,7 @@ export class CozyCreator {
       return await response.json();
     } else if (contentType.includes("application/vnd.msgpack")) {
       const buffer = await response.arrayBuffer();
-      return msgpack.decode(new Uint8Array(buffer)) as T;
+      return decode(new Uint8Array(buffer)) as T;
     } else {
       throw new Error(`Unsupported response Content-Type: ${contentType}`);
     }
@@ -118,3 +118,6 @@ async function* asyncIterableToStream(iterable: AsyncIterable<any>) {
     yield chunk;
   }
 }
+
+// Re-export types for consumers of our library
+export type * from "./types";
