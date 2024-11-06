@@ -44,7 +44,7 @@ export class WorkflowEndpoint {
   async *streamWorkflow(
     id: string,
     options: RequestOptions = {}
-  ): AsyncGenerator<WorkflowOutput | Event> {
+  ): AsyncGenerator<WorkflowOutput> {
     const url = `${this.api.baseUrl}/workflow/${encodeURIComponent(id)}/stream`;
     const headers = mergeHeaders(
       this.api.defaultHeaders,
@@ -61,7 +61,7 @@ export class WorkflowEndpoint {
   private async *_eventSourceGenerator<T>(
     url: string,
     headers: Headers
-  ): AsyncGenerator<T | Event> {
+  ): AsyncGenerator<T> {
     const eventSourceInitDict: EventSourceInitDict = {
       headers,
       rejectUnauthorized: true,
@@ -69,7 +69,7 @@ export class WorkflowEndpoint {
 
     const eventSource = new EventSource(url, eventSourceInitDict);
 
-    const queue: (T | Event)[] = [];
+    const queue: (T)[] = [];
     let isClosed = false;
 
     eventSource.onmessage = (event) => {

@@ -7,7 +7,7 @@ type UUID = string;
 
 export type JobStreamEventType = "status" | "output";
 export type OutputFormat = "jpg" | "png" | "webp";
-export type JobStatus = "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
+export type JobStatus = "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELED";
 export type AspectRatio =
   | "21/9"
   | "16/9"
