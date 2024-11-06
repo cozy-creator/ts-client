@@ -7,7 +7,7 @@ const client = new CozyCreator({
 
 async function main() {
   try {
-    const stream = client.jobs.submitWithEventStream({
+    const stream = client.text2Image.submitWithEventStream({
       models: { "stable-diffusion": 1 },
       positive_prompt: 'A beautiful sunset over the ocean',
       negative_prompt: '',

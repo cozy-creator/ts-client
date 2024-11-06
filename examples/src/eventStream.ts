@@ -6,7 +6,7 @@ const cozy = new CozyCreator({
 });
 
 async function main() {
-  const { id } = await cozy.jobs.submit({
+  const { id } = await cozy.text2Image.submit({
     models: { "stable-diffusion": 2 },
     positive_prompt: 'Naruto logo as a sticker, minimalist',
     negative_prompt: '',
@@ -14,7 +14,7 @@ async function main() {
     output_format: 'webp'
   });
 
-  for await (const event of cozy.jobs.eventStream(id)) {
+  for await (const event of cozy.text2Image.eventStream(id)) {
     console.log(event);
   }
 }

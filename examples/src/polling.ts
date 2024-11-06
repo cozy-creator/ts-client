@@ -6,7 +6,7 @@ const cozy = new CozyCreator({
 });
 
 async function main(): Promise<JobResult> {
-  const { id, status } = await cozy.jobs.submit({
+  const { id, status } = await cozy.text2Image.submit({
     models: { "stable-diffusion": 1 },
     positive_prompt: 'A beautiful sunset over the ocean',
     negative_prompt: '',
@@ -15,10 +15,10 @@ async function main(): Promise<JobResult> {
   });
 
   while (true) {
-    const { status } = await cozy.jobs.getStatus(id);
+    const { status } = await cozy.text2Image.getStatus(id);
 
     if (status === 'COMPLETED') {
-      return await cozy.jobs.getResult(id);
+      return await cozy.text2Image.getResult(id);
     }
 
     if (status === 'FAILED') {
