@@ -8,6 +8,7 @@ import {
 } from "../types";
 import { CozyCreator } from "..";
 import { mergeHeaders } from "../utils";
+import { decode } from "msgpackr";
 
 export class Text2ImageEndpoint {
   private api: CozyCreator;
@@ -77,89 +78,141 @@ export class Text2ImageEndpoint {
   async *eventStream(
     id: string,
     options: RequestOptions = {}
-  ): AsyncGenerator<JobStreamEvent | Event> {
-    const url = `${this.api.baseUrl}/jobs/${id}/stream`;
+  ): AsyncGenerator<JobStreamEvent> {
     const headers = mergeHeaders(
       this.api.defaultHeaders,
       new Headers(options.headers)
     );
 
-    headers.set("Accept", "text/event-stream");
-    yield* this._eventSourceGenerator<JobStreamEvent>(url, headers);
+    // Set default Accept header if not provided
+    if (!headers.get("Accept")) {
+      headers.set("Accept", "application/vnd.msgpack");
+    }
+
+    const url = `${this.api.baseUrl}/jobs/${id}/stream`;
+    yield* this._streamEvents(url, {
+      method: "GET",
+      headers
+    });
   }
 
   /**
    * Submits a job and streams its events.
    */
   async *submitWithEventStream(
-    jobRequest: Text2ImageRequest,
+    request: Text2ImageRequest,
     options: RequestOptions = {}
-  ): AsyncGenerator<JobStreamEvent | Event> {
-    const url = `${this.api.baseUrl}/jobs/stream`;
+  ): AsyncGenerator<JobStreamEvent> {
     const headers = mergeHeaders(
       this.api.defaultHeaders,
       new Headers(options.headers)
     );
 
-    headers.set("Accept", "text/event-stream");
-    headers.set(
-      "Content-Type",
-      headers.get("Content-Type") || "application/json"
-    );
+    // Set defaults if not provided
+    if (!headers.get("Content-Type")) {
+      headers.set("Content-Type", "application/vnd.msgpack");
+    }
+    if (!headers.get("Accept")) {
+      headers.set("Accept", "application/vnd.msgpack");
+    }
+
+    const url = `${this.api.baseUrl}/jobs/submit-and-stream-events`;
     const body = await this.api._serializeData(
-      jobRequest,
+      request,
       headers.get("Content-Type")
     );
 
-    yield* this._eventSourceGenerator<JobStreamEvent>(
-      url,
+    yield* this._streamEvents(url, {
+      method: "POST",
       headers,
-      "POST",
       body
-    );
+    });
   }
 
   /**
-   * Internal method to create an AsyncGenerator from an EventSource.
+   * Internal method to handle streaming responses.
    */
-  private async *_eventSourceGenerator<T>(
+  private async *_streamEvents(
     url: string,
-    headers: Headers,
-    method: string = "GET",
-    body?: any
-  ): AsyncGenerator<T | Event> {
-    const eventSourceInitDict: EventSourceInitDict = {
-      rejectUnauthorized: true,
-      headers,
-      method,
-      body,
-    };
+    init: RequestInit
+  ): AsyncGenerator<JobStreamEvent> {
+    const response = await fetch(url, init);
 
-    const eventSource = new EventSource(url, eventSourceInitDict);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    if (!response.body) {
+      throw new Error('Response body is null');
+    }
 
-    const queue: (T | Event)[] = [];
-    let isClosed = false;
+    const acceptHeader = (
+      init.headers instanceof Headers && init.headers.get("Accept")
+    ) || "application/vnd.msgpack";
 
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data) as T;
-      queue.push(data);
-    };
+    const reader = response.body.getReader();
 
-    eventSource.onerror = (err) => {
-      queue.push(err);
-      isClosed = true;
-      eventSource.close();
-    };
-
-    while (!isClosed || queue.length > 0) {
-      if (queue.length > 0) {
-        const item = queue.shift()!;
-        yield item;
-        if (item instanceof ErrorEvent) {
-          break;
-        }
+    try {
+      if (acceptHeader.includes('text/event-stream')) {
+        yield* this._handleSSEStream(reader);
+      } else if (acceptHeader?.includes('msgpack')) {
+        yield* this._handleMsgPackStream(reader);
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        throw new Error(`Unsupported Accept header: ${acceptHeader}`);
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  }
+
+  /**
+   * Handle Server-Sent Events stream
+   */
+  private async *_handleSSEStream(
+    reader: ReadableStreamDefaultReader<Uint8Array>
+  ): AsyncGenerator<JobStreamEvent> {
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            yield JSON.parse(data);
+          } catch (e) {
+            console.warn('Failed to parse SSE data:', e);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Handle MessagePack stream
+   */
+  private async *_handleMsgPackStream(
+    reader: ReadableStreamDefaultReader<Uint8Array>
+  ): AsyncGenerator<JobStreamEvent> {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      try {
+        const events = decode(value) as JobStreamEvent[];
+        for (const event of events) {
+          yield event;
+        }
+      } catch (e) {
+        console.warn('Failed to parse msgpack data:', e);
       }
     }
   }
