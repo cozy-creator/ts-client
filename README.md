@@ -1,4 +1,4 @@
-This is a TypeScript-Fetch client for interacting with our Gen-Server. It was auto-generated using our [OpenAPI-specification](https://github.com/cozy-creator/gen-server/tree/dev/openapi/v1/openapi.yaml).
+This is a TypeScript-Fetch client for interacting with our Gen-Server. It follows the Gen-Server's [OpenAPI-specification](https://github.com/cozy-creator/gen-server/tree/dev/openapi/v1/openapi.yaml).
 
 Add the client package to your project:
 
@@ -17,7 +17,7 @@ const cozy = new CozyCreator({
 });
 
 async function main(): Promise<JobResult> {
-  const { id, status } = await cozy.jobs.submitJob({
+  const { id, status } = await cozy.text2Image.submit({
     models: { "stable-diffusion": 1 },
     positive_prompt: 'A beautiful sunset over the ocean',
     negative_prompt: '',
@@ -26,10 +26,10 @@ async function main(): Promise<JobResult> {
   });
 
   while (true) {
-    const { status } = await cozy.jobs.getJobStatus(id);
+    const { status } = await cozy.text2Image.getStatus(id);
 
     if (status === 'COMPLETED') {
-      return await cozy.jobs.getJobResult(id);
+      return await cozy.text2Image.getResult(id);
     }
 
     if (status === 'FAILED') {
@@ -43,3 +43,9 @@ async function main(): Promise<JobResult> {
 
 main();
 ```
+
+---
+
+### Notes:
+
+OpenAPI can auto-generate clients, but it was impossible to make a client that could handle streams and message-pack encoding/decoding, plus the code it wrote was mostly trash. Hence why we wrote this client by hand. Honestly I'm pretty bearish on old-fashioned auto-generated code now that we have LLMs.

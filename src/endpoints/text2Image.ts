@@ -2,14 +2,14 @@ import {
   JobStatusResponse,
   JobResult,
   JobStreamEvent,
-  JobRequest,
+  Text2ImageRequest,
   RequestOptions,
   EventSourceInitDict,
 } from "../types";
 import { CozyCreator } from "..";
 import { mergeHeaders } from "../utils";
 
-export class JobsEndpoint {
+export class Text2ImageEndpoint {
   private api: CozyCreator;
 
   constructor(api: CozyCreator) {
@@ -20,7 +20,7 @@ export class JobsEndpoint {
    * Submits a new job to generate images.
    */
   async submit(
-    jobRequest: JobRequest,
+    jobRequest: Text2ImageRequest,
     options: RequestOptions = {}
   ): Promise<JobStatusResponse> {
     const url = `${this.api.baseUrl}/jobs/submit`;
@@ -92,7 +92,7 @@ export class JobsEndpoint {
    * Submits a job and streams its events.
    */
   async *submitWithEventStream(
-    jobRequest: JobRequest,
+    jobRequest: Text2ImageRequest,
     options: RequestOptions = {}
   ): AsyncGenerator<JobStreamEvent | Event> {
     const url = `${this.api.baseUrl}/jobs/stream`;

@@ -1,7 +1,7 @@
 import { encode, decode } from "msgpackr";
 import { FileEndpoint } from "./endpoints/file";
 import { WorkflowEndpoint } from "./endpoints/workflow";
-import { JobsEndpoint } from "./endpoints/jobs";
+import { Text2ImageEndpoint } from "./endpoints/text2Image";
 import { mergeHeaders } from "./utils";
 
 interface Options {
@@ -23,7 +23,7 @@ export class CozyCreator {
 
   public file: FileEndpoint;
   public workflow: WorkflowEndpoint;
-  public jobs: JobsEndpoint;
+  public text2Image: Text2ImageEndpoint;
 
   constructor(options: Options = {}) {
     const apiKey = options.apiKey || process.env.COZY_API_KEY;
@@ -42,7 +42,7 @@ export class CozyCreator {
     }
 
     this.file = new FileEndpoint(this);
-    this.jobs = new JobsEndpoint(this);
+    this.text2Image = new Text2ImageEndpoint(this);
     this.workflow = new WorkflowEndpoint(this);
   }
 
@@ -121,3 +121,4 @@ async function* asyncIterableToStream(iterable: AsyncIterable<any>) {
 
 // Re-export types for consumers of our library
 export type * from "./types";
+export * from "./validators";

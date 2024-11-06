@@ -22,7 +22,7 @@ export interface JobStatusResponse {
   status: JobStatus;
 }
 
-export interface JobRequest {
+export interface Text2ImageRequest {
   models: { [key: string]: number };
   random_seed?: number;
   aspect_ratio?: AspectRatio;
@@ -35,7 +35,7 @@ export interface JobRequest {
 export interface JobResult {
   id: UUID;
   status: JobStatus;
-  input: JobRequest;
+  input: Text2ImageRequest;
   output: {
     [modelName: string]: string[];
   };
