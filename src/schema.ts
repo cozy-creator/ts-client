@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const jobStreamEventType = z.enum(["status", "output", "error"]);
 export const outputFormat = z.enum(["jpg", "png", "webp"]);
-export const jobStatus = z.enum([
+export const workStatus = z.enum([
   "IN_QUEUE",
   "IN_PROGRESS",
   "COMPLETED",
@@ -32,7 +32,7 @@ export const text2ImageRequest = z.object({
 
 export const jobResult = z.object({
   id: z.string(),
-  status: jobStatus,
+  status: workStatus,
   input: text2ImageRequest,
   output: z.record(z.array(z.string())),
   created_at: z.string(),
@@ -45,7 +45,7 @@ export const jobStreamEvent = z.object({
     job_id: z.string(),
     url: z.string().optional(),
     model: z.string().optional(),
-    status: jobStatus.optional(),
+    status: workStatus.optional(),
     errorMessage: z.string().optional(),
   }),
 });
@@ -83,5 +83,5 @@ export const workflowOutput = z.object({
 
 export const jobStatusResponse = z.object({
   id: z.string(),
-  status: jobStatus,
+  status: workStatus,
 });

@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   aspectRatio,
   jobResult,
-  jobStatus,
+  workStatus,
   jobStatusResponse,
   jobStreamEvent,
   jobStreamEventType,
@@ -23,7 +23,7 @@ export interface RequestOptions {
 
 export type JobStreamEventType = z.infer<typeof jobStreamEventType>;
 export type OutputFormat = z.infer<typeof outputFormat>;
-export type JobStatus = z.infer<typeof jobStatus>;
+export type WorkStatus = z.infer<typeof workStatus>;
 export type AspectRatio = z.infer<typeof aspectRatio>;
 
 export type Text2ImageRequest = z.infer<typeof text2ImageRequest>;
