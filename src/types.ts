@@ -5,7 +5,7 @@ export interface RequestOptions {
 
 type UUID = string;
 
-export type JobStreamEventType = "status" | "output";
+export type JobStreamEventType = "status" | "output" | "error";
 export type OutputFormat = "jpg" | "png" | "webp";
 export type JobStatus = "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELED";
 export type AspectRatio =
@@ -50,6 +50,7 @@ export interface JobStreamEvent {
     url?: string;
     model?: string;
     status?: JobStatus;
+    errorMessage?: string;
   };
 }
 
