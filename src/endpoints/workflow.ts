@@ -69,7 +69,7 @@ export class WorkflowEndpoint {
 
     const eventSource = new EventSource(url, eventSourceInitDict);
 
-    const queue: (T)[] = [];
+    const queue: (T | Event)[] = [];
     let isClosed = false;
 
     eventSource.onmessage = (event) => {
