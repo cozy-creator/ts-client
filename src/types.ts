@@ -7,7 +7,7 @@ type UUID = string;
 
 export type JobStreamEventType = "status" | "output" | "error";
 export type OutputFormat = "jpg" | "png" | "webp";
-export type JobStatus = "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELED";
+export type WorkStatus = "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELED";
 export type AspectRatio =
   | "21/9"
   | "16/9"
@@ -19,7 +19,7 @@ export type AspectRatio =
 
 export interface JobStatusResponse {
   id: string;
-  status: JobStatus;
+  status: WorkStatus;
 }
 
 export interface Text2ImageRequest {
@@ -34,7 +34,7 @@ export interface Text2ImageRequest {
 
 export interface JobResult {
   id: UUID;
-  status: JobStatus;
+  status: WorkStatus;
   input: Text2ImageRequest;
   output: {
     [modelName: string]: string[];
@@ -49,7 +49,7 @@ export interface JobStreamEvent {
     job_id: UUID;
     url?: string;
     model?: string;
-    status?: JobStatus;
+    status?: WorkStatus;
     errorMessage?: string;
   };
 }
