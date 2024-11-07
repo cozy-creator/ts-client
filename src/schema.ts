@@ -46,6 +46,7 @@ export const text2MediaResult = z.object({
   })),
   created_at: z.string(),
   completed_at: z.string(),
+  errorMessage: z.string().optional(),
 });
 
 // Base event structure
@@ -60,6 +61,7 @@ export const statusEvent = baseEvent.extend({
     data: z.object({
         job_id: z.string(),
         status: workStatus,
+        errorMessage: z.string().optional(),
     }),
 });
 
