@@ -30,12 +30,13 @@ export const text2ImageRequest = z.object({
   another: z.string().optional(),
 });
 
-export const jobResult = z.object({
+export const text2MediaResult = z.object({
   id: z.string(),
   status: workStatus,
   input: text2ImageRequest,
   output_events: z.array(z.object({
-    model: z.string(), 
+    model: z.string(),
+    mimeType: z.string(),
     url: z.string().optional(),
     fileBytes: z.instanceof(Uint8Array).optional()
   })),
@@ -68,6 +69,7 @@ export const outputEvent = baseEvent.extend({
     data: z.object({
         job_id: z.string(),
         model: z.string(),
+        mimeType: z.string(),
         url: z.string().optional(),
         fileBytes: z.instanceof(Uint8Array).optional(),
     }),

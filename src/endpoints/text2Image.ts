@@ -1,6 +1,6 @@
 import {
   JobStatusResponse,
-  JobResult,
+  Text2MediaResult,
   JobStreamEvent,
   Text2ImageRequest,
   RequestOptions,
@@ -64,12 +64,12 @@ export class Text2ImageEndpoint {
   async getResult(
     id: string,
     options: RequestOptions = {}
-  ): Promise<JobResult> {
+  ): Promise<Text2MediaResult> {
     const url = `${this.api.baseUrl}/jobs/${id}/result`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const response = await fetch(url, { method: "GET", headers });
-    return this.api._handleResponse<JobResult>(response);
+    return this.api._handleResponse<Text2MediaResult>(response);
   }
 
   /**

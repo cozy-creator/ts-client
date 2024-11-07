@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
   aspectRatio,
-  jobResult,
+  text2MediaResult,
   workStatus,
   jobStatusResponse,
   statusEvent,
@@ -35,7 +35,7 @@ export type WorkStatus = z.infer<typeof workStatus>;
 export type AspectRatio = z.infer<typeof aspectRatio>;
 
 export type Text2ImageRequest = z.infer<typeof text2ImageRequest>;
-export type JobResult = z.infer<typeof jobResult>;
+export type Text2MediaResult = z.infer<typeof text2MediaResult>;
 export type UploadResponse = z.infer<typeof uploadResponse>;
 export type Node = z.infer<typeof node>;
 export type JobStatusResponse = z.infer<typeof jobStatusResponse>;

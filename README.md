@@ -16,7 +16,7 @@ const cozy = new CozyCreator({
   apiKey: "LtozVIUp9dAvfZSe6HAWCDZWtJfP1uTC",
 });
 
-async function main(): Promise<JobResult> {
+async function main(): Promise<Text2MediaResult> {
   const { id, status } = await cozy.text2Image.submit({
     models: { "stable-diffusion": 1 },
     positive_prompt: 'A beautiful sunset over the ocean',
