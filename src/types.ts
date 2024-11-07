@@ -4,6 +4,9 @@ import {
   jobResult,
   workStatus,
   jobStatusResponse,
+  statusEvent,
+  outputEvent,
+  errorEvent,
   jobStreamEvent,
   jobStreamEventType,
   node,
@@ -21,6 +24,11 @@ export interface RequestOptions {
   headers?: HeadersInit;
 }
 
+// Typescript types derived from zod schemas
+export type StatusEvent = z.infer<typeof statusEvent>;
+export type OutputEvent = z.infer<typeof outputEvent>;
+export type ErrorEvent = z.infer<typeof errorEvent>;
+export type JobStreamEvent = z.infer<typeof jobStreamEvent>;
 export type JobStreamEventType = z.infer<typeof jobStreamEventType>;
 export type OutputFormat = z.infer<typeof outputFormat>;
 export type WorkStatus = z.infer<typeof workStatus>;
@@ -28,7 +36,6 @@ export type AspectRatio = z.infer<typeof aspectRatio>;
 
 export type Text2ImageRequest = z.infer<typeof text2ImageRequest>;
 export type JobResult = z.infer<typeof jobResult>;
-export type JobStreamEvent = z.infer<typeof jobStreamEvent>;
 export type UploadResponse = z.infer<typeof uploadResponse>;
 export type Node = z.infer<typeof node>;
 export type JobStatusResponse = z.infer<typeof jobStatusResponse>;

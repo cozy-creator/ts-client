@@ -34,21 +34,61 @@ export const jobResult = z.object({
   id: z.string(),
   status: workStatus,
   input: text2ImageRequest,
-  output: z.record(z.array(z.string())),
+  output_events: z.array(z.object({
+    model: z.string(), 
+    url: z.string().optional(),
+    fileBytes: z.instanceof(Uint8Array).optional()
+  })),
+  error_events: z.array(z.object({
+    model: z.string(),
+    errorMessage: z.string()
+  })),
   created_at: z.string(),
   completed_at: z.string(),
 });
 
-export const jobStreamEvent = z.object({
-  event: jobStreamEventType,
-  data: z.object({
-    job_id: z.string(),
-    url: z.string().optional(),
-    model: z.string().optional(),
-    status: workStatus.optional(),
-    errorMessage: z.string().optional(),
-  }),
+// Base event structure
+const baseEvent = z.object({
+    id: z.string().optional(), // message id from pulsar
+    retry: z.number().optional(), // retry timeout in ms
 });
+
+// Status event
+export const statusEvent = baseEvent.extend({
+    type: z.literal("status"),
+    data: z.object({
+        job_id: z.string(),
+        status: workStatus,
+    }),
+});
+
+// Output event
+export const outputEvent = baseEvent.extend({
+    type: z.literal("output"),
+    data: z.object({
+        job_id: z.string(),
+        model: z.string(),
+        url: z.string().optional(),
+        fileBytes: z.instanceof(Uint8Array).optional(),
+    }),
+});
+
+// Error event
+export const errorEvent = baseEvent.extend({
+    type: z.literal("error"),
+    data: z.object({
+        job_id: z.string(),
+        model: z.string(),
+        errorMessage: z.string(),
+    }),
+});
+
+// Combined event type
+export const jobStreamEvent = z.discriminatedUnion("type", [
+    statusEvent,
+    outputEvent,
+    errorEvent,
+]);
 
 export const uploadResponse = z.object({
   status: z.string(),
