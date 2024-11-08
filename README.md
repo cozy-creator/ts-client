@@ -17,7 +17,7 @@ const cozy = new CozyCreator({
 });
 
 async function main(): Promise<Text2MediaResult> {
-  const { id, status } = await cozy.text2Image.submit({
+  const { id, status } = await cozy.text2Media.submit({
     models: { "stable-diffusion": 1 },
     positive_prompt: 'A beautiful sunset over the ocean',
     negative_prompt: '',
@@ -26,10 +26,10 @@ async function main(): Promise<Text2MediaResult> {
   });
 
   while (true) {
-    const { status } = await cozy.text2Image.getStatus(id);
+    const { status } = await cozy.text2Media.getStatus(id);
 
     if (status === 'COMPLETED') {
-      return await cozy.text2Image.getResult(id);
+      return await cozy.text2Media.getResult(id);
     }
 
     if (status === 'FAILED') {

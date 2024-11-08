@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-export const jobStreamEventType = z.enum(["status", "output", "error"]);
-export const outputFormat = z.enum(["jpg", "png", "webp"]);
+export const jobEventKind = z.enum(["status", "output", "error"]);
+export const errorType = z.enum(["output_failed"]);
+export const outputFormat = z.enum(["jpg", "png", "webp", "svg", "mp4"]);
 export const workStatus = z.enum([
   "IN_QUEUE",
   "IN_PROGRESS",
@@ -19,34 +20,33 @@ export const aspectRatio = z.enum([
   "9/21",
 ]);
 
-export const text2ImageRequest = z.object({
+export const text2MediaRequest = z.object({
+  model: z.string(),
   positive_prompt: z.string(),
-  models: z.record(z.number()),
-  webhook_url: z.string().optional(),
+  negative_prompt: z.string().optional(),
+  num_outputs: z.number().optional(),
+  output_format: outputFormat.optional(),
   random_seed: z.number().optional(),
   aspect_ratio: aspectRatio.optional(),
-  negative_prompt: z.string().optional(),
-  output_format: outputFormat.optional(),
-  another: z.string().optional(),
+  webhook_url: z.string().optional(),
 });
 
 export const text2MediaResult = z.object({
   id: z.string(),
   status: workStatus,
-  input: text2ImageRequest,
+  input: text2MediaRequest,
   output_events: z.array(z.object({
-    model: z.string(),
-    mimeType: z.string(),
+    mime_type: z.string(),
     url: z.string().optional(),
-    fileBytes: z.instanceof(Uint8Array).optional()
+    file_bytes: z.instanceof(Uint8Array).optional()
   })),
   error_events: z.array(z.object({
-    model: z.string(),
-    errorMessage: z.string()
+    error_type: errorType,
+    error_message: z.string()
   })),
   created_at: z.string(),
   completed_at: z.string(),
-  errorMessage: z.string().optional(),
+  error_message: z.string().optional(),
 });
 
 // Base event structure
@@ -61,7 +61,7 @@ export const statusEvent = baseEvent.extend({
     data: z.object({
         job_id: z.string(),
         status: workStatus,
-        errorMessage: z.string().optional(),
+        error_message: z.string().optional(),
     }),
 });
 
@@ -70,10 +70,9 @@ export const outputEvent = baseEvent.extend({
     type: z.literal("output"),
     data: z.object({
         job_id: z.string(),
-        model: z.string(),
-        mimeType: z.string(),
+        mime_type: z.string(),
         url: z.string().optional(),
-        fileBytes: z.instanceof(Uint8Array).optional(),
+        file_bytes: z.instanceof(Uint8Array).optional(),
     }),
 });
 
@@ -82,13 +81,13 @@ export const errorEvent = baseEvent.extend({
     type: z.literal("error"),
     data: z.object({
         job_id: z.string(),
-        model: z.string(),
-        errorMessage: z.string(),
+        error_type: z.string(),
+        error_message: z.string().optional(),
     }),
 });
 
 // Combined event type
-export const jobStreamEvent = z.discriminatedUnion("type", [
+export const jobEvent = z.discriminatedUnion("type", [
     statusEvent,
     outputEvent,
     errorEvent,
@@ -119,8 +118,8 @@ export const workflowResponse = z.object({
 export const nodeOutput = z.record(z.any());
 
 export const workflowOutput = z.object({
-  nodeID: z.string(),
-  nodeType: z.string(),
+  node_id: z.string(),
+  node_type: z.string(),
   output: nodeOutput,
   error: z.string().optional(),
 });

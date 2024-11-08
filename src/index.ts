@@ -1,7 +1,7 @@
 import { encode, decode } from "msgpackr";
 import { FileEndpoint } from "./endpoints/file";
 import { WorkflowEndpoint } from "./endpoints/workflow";
-import { Text2ImageEndpoint } from "./endpoints/text2Image";
+import { Text2MediaEndpoint } from "./endpoints/text2Media";
 import { mergeHeaders } from "./utils";
 
 interface Options {
@@ -23,7 +23,7 @@ export class CozyCreator {
 
   public file: FileEndpoint;
   public workflow: WorkflowEndpoint;
-  public text2Image: Text2ImageEndpoint;
+  public text2Media: Text2MediaEndpoint;
 
   constructor(options: Options = {}) {
     const apiKey = options.apiKey || process.env.COZY_API_KEY;
@@ -42,7 +42,7 @@ export class CozyCreator {
     }
 
     this.file = new FileEndpoint(this);
-    this.text2Image = new Text2ImageEndpoint(this);
+    this.text2Media = new Text2MediaEndpoint(this);
     this.workflow = new WorkflowEndpoint(this);
   }
 

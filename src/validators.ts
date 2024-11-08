@@ -1,8 +1,8 @@
-import { aspectRatio, outputFormat, text2ImageRequest, text2MediaResult } from "./schema";
-import { Text2ImageRequest, AspectRatio, OutputFormat, Text2MediaResult } from "./types";
+import { aspectRatio, outputFormat, text2MediaRequest, text2MediaResult } from "./schema";
+import { Text2MediaRequest, AspectRatio, OutputFormat, Text2MediaResult } from "./types";
 
-export function isText2ImageRequest(obj: any): obj is Text2ImageRequest {
-  return text2ImageRequest.safeParse(obj).success;
+export function isText2ImageRequest(obj: any): obj is Text2MediaRequest {
+  return text2MediaRequest.safeParse(obj).success;
 }
 
 export function isValidAspectRatio(value: any): value is AspectRatio {

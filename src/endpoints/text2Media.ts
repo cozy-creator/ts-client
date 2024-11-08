@@ -1,16 +1,16 @@
 import {
   JobStatusResponse,
   Text2MediaResult,
-  JobStreamEvent,
-  Text2ImageRequest,
+  JobEvent,
+  Text2MediaRequest,
   RequestOptions,
 } from "../types";
 import { CozyCreator } from "..";
 import { mergeHeaders } from "../utils";
 import { decode } from "msgpackr";
-import { jobStreamEvent } from "../schema";
+import { jobEvent } from "../schema";
 
-export class Text2ImageEndpoint {
+export class Text2MediaEndpoint {
   private api: CozyCreator;
 
   constructor(api: CozyCreator) {
@@ -18,10 +18,10 @@ export class Text2ImageEndpoint {
   }
 
   /**
-   * Submits a new job to generate images.
+   * Submits a new job to generate media.
    */
   async submit(
-    jobRequest: Text2ImageRequest,
+    jobRequest: Text2MediaRequest,
     options: RequestOptions = {}
   ): Promise<JobStatusResponse> {
     const url = `${this.api.baseUrl}/jobs/submit`;
@@ -75,10 +75,10 @@ export class Text2ImageEndpoint {
   /**
    * Streams events for a specific job.
    */
-  async *eventStream(
+  async *streamEvents(
     id: string,
     options: RequestOptions = {}
-  ): AsyncGenerator<JobStreamEvent> {
+  ): AsyncGenerator<JobEvent> {
     const headers = mergeHeaders(
       this.api.defaultHeaders,
       new Headers(options.headers)
@@ -99,10 +99,10 @@ export class Text2ImageEndpoint {
   /**
    * Submits a job and streams its events.
    */
-  async *submitWithEventStream(
-    request: Text2ImageRequest,
+  async *submitAndStreamEvents(
+    request: Text2MediaRequest,
     options: RequestOptions = {}
-  ): AsyncGenerator<JobStreamEvent> {
+  ): AsyncGenerator<JobEvent> {
     const headers = mergeHeaders(
       this.api.defaultHeaders,
       new Headers(options.headers)
@@ -135,7 +135,7 @@ export class Text2ImageEndpoint {
   private async *_streamEvents(
     url: string,
     init: RequestInit
-  ): AsyncGenerator<JobStreamEvent> {
+  ): AsyncGenerator<JobEvent> {
     const response = await fetch(url, init);
 
     if (!response.ok) {
@@ -172,7 +172,7 @@ export class Text2ImageEndpoint {
    */
   private async *_handleSSEStream(
     reader: ReadableStreamDefaultReader<Uint8Array>
-  ): AsyncGenerator<JobStreamEvent> {
+  ): AsyncGenerator<JobEvent> {
     const decoder = new TextDecoder();
     let buffer = "";
 
@@ -203,7 +203,7 @@ export class Text2ImageEndpoint {
    */
   private async *_handleMsgPackStream(
     reader: ReadableStreamDefaultReader<Uint8Array>
-  ): AsyncGenerator<JobStreamEvent> {
+  ): AsyncGenerator<JobEvent> {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -211,7 +211,7 @@ export class Text2ImageEndpoint {
       try {
         if (done) break;
         const decoded = decode(value);
-        yield jobStreamEvent.parse(decoded);
+        yield jobEvent.parse(decoded);
       } catch (e) {
         console.warn("Failed to parse msgpack data:", e);
       }

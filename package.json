@@ -1,12 +1,27 @@
 {
   "name": "@cozy-creator/ts-client",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./schema": {
+      "default": "./dist/schema.js",
+      "types": "./dist/schema.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "schema": ["./dist/schema.d.ts"]
+    }
+  },
   "files": [
     "dist",
     "LICENSE",

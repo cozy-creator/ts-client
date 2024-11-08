@@ -1,7 +1,7 @@
 {
   "name": "ts-client-examples",
   "scripts": {
-    "demo": "cd .. && yarn build && cd examples && yarn install && ts-node src/submitAndStream.ts",
+    "demo": "cd .. && yarn build && cd examples && yarn install && ts-node src/submitAndStreamEvents.ts",
     "build": "yarn clean && tsc",
     "clean": "rm -rf dist"
   },

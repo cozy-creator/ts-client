@@ -7,12 +7,12 @@ import {
   statusEvent,
   outputEvent,
   errorEvent,
-  jobStreamEvent,
-  jobStreamEventType,
+  jobEvent,
+  jobEventKind,
   node,
   nodeOutput,
   outputFormat,
-  text2ImageRequest,
+  text2MediaRequest,
   uploadResponse,
   workflow,
   workflowOutput,
@@ -28,13 +28,13 @@ export interface RequestOptions {
 export type StatusEvent = z.infer<typeof statusEvent>;
 export type OutputEvent = z.infer<typeof outputEvent>;
 export type ErrorEvent = z.infer<typeof errorEvent>;
-export type JobStreamEvent = z.infer<typeof jobStreamEvent>;
-export type JobStreamEventType = z.infer<typeof jobStreamEventType>;
+export type JobEvent = z.infer<typeof jobEvent>;
+export type JobEventKind = z.infer<typeof jobEventKind>;
 export type OutputFormat = z.infer<typeof outputFormat>;
 export type WorkStatus = z.infer<typeof workStatus>;
 export type AspectRatio = z.infer<typeof aspectRatio>;
 
-export type Text2ImageRequest = z.infer<typeof text2ImageRequest>;
+export type Text2MediaRequest = z.infer<typeof text2MediaRequest>;
 export type Text2MediaResult = z.infer<typeof text2MediaResult>;
 export type UploadResponse = z.infer<typeof uploadResponse>;
 export type Node = z.infer<typeof node>;
