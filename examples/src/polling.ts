@@ -21,12 +21,12 @@ async function main(): Promise<Text2MediaResult> {
       return await cozy.text2Media.getResult(id);
     }
 
-    if (status === 'FAILED') {
-      throw new Error('Job failed');
+    if (status === "FAILED") {
+      throw new Error("Job failed");
     }
 
     // Poll every second
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }
 
