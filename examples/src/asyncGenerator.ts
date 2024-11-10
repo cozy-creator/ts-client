@@ -1,8 +1,5 @@
 import { CozyCreator } from "@cozy-creator/ts-client";
 
-// flux: https://vgrnd1vnix89kd-9009.proxy.runpod.net/
-// pony: https://gwsrynqpn4wbbb-9009.proxy.runpod.net/
-
 const client = new CozyCreator({
   baseUrl: "https://gwsrynqpn4wbbb-9009.proxy.runpod.net/api/v1",
   apiKey: "LtozVIUp9dAvfZSe6HAWCDZWtJfP1uTC",
