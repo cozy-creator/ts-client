@@ -7,7 +7,8 @@ const cozy = new CozyCreator({
 
 async function main() {
   const { id } = await cozy.text2Media.submit({
-    models: { "playground2.5": 2 },
+    num_outputs: 2,
+    model: "playground2.5",
     positive_prompt: "Naruto logo as a sticker, minimalist",
     negative_prompt: "",
     aspect_ratio: "1/1",

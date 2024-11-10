@@ -1,25 +1,20 @@
 import { CozyCreator } from "@cozy-creator/ts-client";
 
+// flux: https://vgrnd1vnix89kd-9009.proxy.runpod.net/
+// pony: https://gwsrynqpn4wbbb-9009.proxy.runpod.net/
+
 const client = new CozyCreator({
-  baseUrl: "http://localhost:9009/api/v1",
+  baseUrl: "https://gwsrynqpn4wbbb-9009.proxy.runpod.net/api/v1",
   apiKey: "LtozVIUp9dAvfZSe6HAWCDZWtJfP1uTC",
 });
-
-// /jobs/submit
-// /jobs/flux.1-dev/submit
 
 async function main() {
   try {
     const stream = client.text2Media.submitAndStreamEvents({
-      // models: { "stable-diffusion": 1 },
-      // positive_prompt: 'A beautiful sunset over the ocean',
-      // negative_prompt: '',
-      // aspect_ratio: '16/9',
-      // output_format: 'webp'
-
-      models: { "playground2.5": 4 },
-      positive_prompt: "Naruto logo as a sticker, minimalist",
-      negative_prompt: "",
+      num_outputs: 2,
+      model: "pony.v6",
+      positive_prompt: "score_9, score_8_up, score_7_up, an anime woman",
+      negative_prompt: "low quality, worst quality, watermark, blurry, text",
       aspect_ratio: "1/1",
       output_format: "png",
       webhook_url: "https://webhook.site/a433f22f-028a-4da9-b435-619d8f4cd141",

@@ -42,8 +42,8 @@ export class CozyCreator {
     }
 
     this.file = new FileEndpoint(this);
-    this.text2Media = new Text2MediaEndpoint(this);
     this.workflow = new WorkflowEndpoint(this);
+    this.text2Media = new Text2MediaEndpoint(this);
   }
 
   _prepareHeaders(customHeaders?: HeadersInit): Headers {

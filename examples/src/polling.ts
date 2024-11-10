@@ -7,7 +7,8 @@ const cozy = new CozyCreator({
 
 async function main(): Promise<Text2MediaResult> {
   const { id, status } = await cozy.text2Media.submit({
-    models: { "stable-diffusion": 1 },
+    num_outputs: 2,
+    model: "playground2.5",
     positive_prompt: 'A beautiful sunset over the ocean',
     negative_prompt: '',
     aspect_ratio: '16/9',
