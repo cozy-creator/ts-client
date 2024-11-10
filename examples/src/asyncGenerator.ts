@@ -28,6 +28,3 @@ async function main() {
 }
 
 main();
-
-// 9c3I1grWwYMS278W
-// postgresql://postgres.xszgovglpyjgdqkqhpon:9c3I1grWwYMS278W@aws-0-us-west-1.pooler.supabase.com:6543/postgres
