@@ -34,7 +34,9 @@ export class CozyCreator {
     }
 
     this._apiKey = apiKey;
-    this._baseUrl = options.baseUrl || "https://api.cozy.art/v1";
+    this._baseUrl = this._normalizeUrl(
+      options.baseUrl || "https://api.cozy.art/v1"
+    );
 
     this._defaultHeaders = new Headers(options.headers);
     if (!this._defaultHeaders.has("X-API-Key")) {
@@ -45,6 +47,18 @@ export class CozyCreator {
     this.workflow = new WorkflowEndpoint(this);
     this.text2Media = new Text2MediaEndpoint(this);
   }
+
+  private _normalizeUrl(url: string): string {
+    // Ensure protocol is specified
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      url = "https://" + url;
+    }
+
+    // Remove trailing slashes
+    url = url.replace(/\/+$/, "");
+
+    return url;
+}
 
   _prepareHeaders(customHeaders?: HeadersInit): Headers {
     const headers = mergeHeaders(
