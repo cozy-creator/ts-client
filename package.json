@@ -1,6 +1,6 @@
 {
   "name": "@cozy-creator/ts-client",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -19,7 +19,9 @@
   },
   "typesVersions": {
     "*": {
-      "schema": ["./dist/schema.d.ts"]
+      "schema": [
+        "./dist/schema.d.ts"
+      ]
     }
   },
   "files": [
