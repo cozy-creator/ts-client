@@ -31,67 +31,66 @@ export const text2MediaRequest = z.object({
   webhook_url: z.string().optional(),
 });
 
-export const text2MediaResult = z.object({
-  id: z.string(),
-  status: workStatus,
-  input: text2MediaRequest,
-  output_events: z.array(z.object({
-    mime_type: z.string(),
-    url: z.string().optional(),
-    file_bytes: z.instanceof(Uint8Array).optional()
-  })),
-  error_events: z.array(z.object({
-    error_type: errorType,
-    error_message: z.string()
-  })),
-  created_at: z.string(),
-  completed_at: z.string(),
-  error_message: z.string().optional(),
-});
-
 // Base event structure
 const baseEvent = z.object({
-    id: z.string().optional(), // message id from pulsar
-    retry: z.number().optional(), // retry timeout in ms
+  id: z.string().optional(), // message id from pulsar
+  retry: z.number().optional(), // retry timeout in ms
 });
 
 // Status event
 export const statusEvent = baseEvent.extend({
-    type: z.literal("status"),
-    data: z.object({
-        job_id: z.string(),
-        status: workStatus,
-        error_message: z.string().optional(),
-    }),
+  type: z.literal("status"),
+  data: z.object({
+    job_id: z.string(),
+    status: workStatus,
+    error_message: z.string().optional(),
+  }),
 });
 
 // Output event
 export const outputEvent = baseEvent.extend({
-    type: z.literal("output"),
-    data: z.object({
-        job_id: z.string(),
-        mime_type: z.string(),
-        url: z.string().optional(),
-        file_bytes: z.instanceof(Uint8Array).optional(),
-    }),
+  type: z.literal("output"),
+  data: z.object({
+    job_id: z.string(),
+    mime_type: z.string(),
+    url: z.string().optional(),
+    file_bytes: z.instanceof(Uint8Array).optional(),
+  }),
 });
 
 // Error event
 export const errorEvent = baseEvent.extend({
-    type: z.literal("error"),
-    data: z.object({
-        job_id: z.string(),
-        error_type: z.string(),
-        error_message: z.string().optional(),
-    }),
+  type: z.literal("error"),
+  data: z.object({
+    job_id: z.string(),
+    error_type: z.string(),
+    error_message: z.string().optional(),
+  }),
 });
 
 // Combined event type
 export const jobEvent = z.discriminatedUnion("type", [
-    statusEvent,
-    outputEvent,
-    errorEvent,
+  statusEvent,
+  outputEvent,
+  errorEvent,
 ]);
+
+const imageOutput = z.object({
+  mime_type: z.string(),
+  url: z.string().optional(),
+  file_bytes: z.instanceof(Uint8Array).optional(),
+});
+
+export const text2MediaResult = z.object({
+  id: z.string(),
+  status: workStatus,
+  input: text2MediaRequest,
+  events: z.array(jobEvent),
+  output: z.array(imageOutput),
+  created_at: z.string(),
+  completed_at: z.string(),
+  error_message: z.string().optional(),
+});
 
 export const uploadResponse = z.object({
   status: z.string(),

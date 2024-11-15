@@ -61,15 +61,17 @@ export class Text2MediaEndpoint {
   /**
    * Retrieves the completed image result of a job.
    */
-  async getResult(
+  async getJob(
     id: string,
     options: RequestOptions = {}
   ): Promise<Text2MediaResult> {
-    const url = `${this.api.baseUrl}/jobs/${id}/result`;
+    const url = `${this.api.baseUrl}/jobs/${id}`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const response = await fetch(url, { method: "GET", headers });
-    return this.api._handleResponse<Text2MediaResult>(response);
+    return (
+      await this.api._handleResponse<{ data: Text2MediaResult }>(response)
+    ).data;
   }
 
   /**
@@ -151,8 +153,6 @@ export class Text2MediaEndpoint {
       "application/vnd.msgpack";
 
     const reader = response.body.getReader();
-
-    console.log("acceptHeader: ", acceptHeader);
 
     try {
       if (acceptHeader.includes("text/event-stream")) {

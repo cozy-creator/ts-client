@@ -9,17 +9,17 @@ async function main(): Promise<Text2MediaResult> {
   const { id, status } = await cozy.text2Media.submit({
     num_outputs: 2,
     model: "playground2.5",
-    positive_prompt: 'A beautiful sunset over the ocean',
-    negative_prompt: '',
-    aspect_ratio: '16/9',
-    output_format: 'webp'
+    positive_prompt: "A beautiful sunset over the ocean",
+    negative_prompt: "",
+    aspect_ratio: "16/9",
+    output_format: "webp",
   });
 
   while (true) {
     const { status } = await cozy.text2Media.getStatus(id);
 
-    if (status === 'COMPLETED') {
-      return await cozy.text2Media.getResult(id);
+    if (status === "COMPLETED") {
+      return await cozy.text2Media.getJob(id);
     }
 
     if (status === "FAILED") {
