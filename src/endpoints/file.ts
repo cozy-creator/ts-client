@@ -29,6 +29,7 @@ export class FileEndpoint {
     );
 
     const response = await fetch(url, {
+      ...options,
       body: formData as any,
       method: "POST",
       headers,

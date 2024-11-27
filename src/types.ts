@@ -22,6 +22,8 @@ import {
 /* Request and Response Options */
 export interface RequestOptions {
   headers?: HeadersInit;
+  signal?: AbortSignal;
+  timeout?: number;
 }
 
 // Typescript types derived from zod schemas

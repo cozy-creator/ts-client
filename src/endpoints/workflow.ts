@@ -30,6 +30,7 @@ export class WorkflowEndpoint {
       headers.get("Content-Type")
     );
     const response = await fetch(url, {
+      ...options,
       method: "POST",
       headers,
       body: body as any,
