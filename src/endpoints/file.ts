@@ -17,7 +17,7 @@ export class FileEndpoint {
     file: Buffer | Blob | File | ReadableStream<Uint8Array> | string,
     options: RequestOptions = {}
   ): Promise<UploadResponse> {
-    const url = `${this.api.baseUrl}/upload`;
+    const url = `${this.api.baseUrl}${this.api.version}/upload`;
 
     const formData = new FormData();
     formData.append("file", file);

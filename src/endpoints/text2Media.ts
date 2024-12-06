@@ -24,7 +24,7 @@ export class Text2MediaEndpoint {
     jobRequest: Text2MediaRequest,
     options: RequestOptions = {}
   ): Promise<JobStatusResponse> {
-    const url = `${this.api.baseUrl}/jobs/submit`;
+    const url = `${this.api.baseUrl}${this.api.version}/jobs/submit`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const body = await this.api._serializeData(
@@ -48,7 +48,7 @@ export class Text2MediaEndpoint {
     id: string,
     options: RequestOptions = {}
   ): Promise<JobStatusResponse> {
-    const url = `${this.api.baseUrl}/jobs/${id}/status`;
+    const url = `${this.api.baseUrl}${this.api.version}/jobs/${id}/status`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const response = await fetch(url, {
@@ -67,7 +67,7 @@ export class Text2MediaEndpoint {
     id: string,
     options: RequestOptions = {}
   ): Promise<Text2MediaResult> {
-    const url = `${this.api.baseUrl}/jobs/${id}`;
+    const url = `${this.api.baseUrl}${this.api.version}/jobs/${id}`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const response = await fetch(url, {
@@ -97,7 +97,7 @@ export class Text2MediaEndpoint {
       headers.set("Accept", "application/vnd.msgpack");
     }
 
-    const url = `${this.api.baseUrl}/jobs/${id}/stream`;
+    const url = `${this.api.baseUrl}${this.api.version}/jobs/${id}/stream`;
     yield* this.api._streamEvents(url, {
       ...options,
       method: "GET",
@@ -125,7 +125,7 @@ export class Text2MediaEndpoint {
       headers.set("Accept", "application/vnd.msgpack");
     }
 
-    const url = `${this.api.baseUrl}/jobs/stream`;
+    const url = `${this.api.baseUrl}${this.api.version}/jobs/stream`;
     const body = await this.api._serializeData(
       request,
       headers.get("Content-Type")

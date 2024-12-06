@@ -22,7 +22,7 @@ export class WorkflowEndpoint {
     workflow: Workflow,
     options: RequestOptions = {}
   ): Promise<WorkflowResponse> {
-    const url = `${this.api.baseUrl}/workflow/execute`;
+    const url = `${this.api.baseUrl}${this.api.version}/workflow/execute`;
     const headers = this.api._prepareHeaders(options.headers);
 
     const body = await this.api._serializeData(
@@ -46,7 +46,7 @@ export class WorkflowEndpoint {
     id: string,
     options: RequestOptions = {}
   ): AsyncGenerator<WorkflowOutput | Event> {
-    const url = `${this.api.baseUrl}/workflow/${encodeURIComponent(id)}/stream`;
+    const url = `${this.api.baseUrl}${this.api.version}/workflow/${encodeURIComponent(id)}/stream`;
     const headers = mergeHeaders(
       this.api.defaultHeaders,
       new Headers(options.headers)

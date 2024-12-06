@@ -1,7 +1,7 @@
 import { CozyCreator, Text2MediaResult } from "@cozy-creator/ts-client";
 
 const cozy = new CozyCreator({
-  baseUrl: "http://localhost:8881/v1",
+  baseUrl: "http://localhost:8881",
   apiKey: "LtozVIUp9dAvfZSe6HAWCDZWtJfP1uTC",
 });
 

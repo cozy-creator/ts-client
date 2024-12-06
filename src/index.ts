@@ -37,7 +37,7 @@ export class CozyCreator {
 
     this._apiKey = apiKey;
     this._baseUrl = this._normalizeUrl(
-      options.baseUrl || "https://api.cozy.art/v1"
+      options.baseUrl || "https://api.cozy.art"
     );
 
     this._defaultHeaders = new Headers(options.headers);
@@ -200,6 +200,10 @@ export class CozyCreator {
 
   public get baseUrl() {
     return this._baseUrl;
+  }
+
+  public get version() {
+    return "/v1";
   }
 
   public get defaultHeaders() {

@@ -1,7 +1,7 @@
 import { CozyCreator } from "@cozy-creator/ts-client";
 
 const cozy = new CozyCreator({
-  baseUrl: "http://localhost:8881/api/v1",
+  baseUrl: "http://localhost:8881",
   apiKey: "UDR-JwDFT53ZpMYXSGAPdpWDnFDHbPMToqfDD6T1s2U",
 });
 
