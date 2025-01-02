@@ -13,6 +13,13 @@ async function main(): Promise<Text2MediaResult> {
     negative_prompt: "",
     aspect_ratio: "16/9",
     output_format: "webp",
+    enhance_prompt: true,
+    loras: [
+      {
+        url: "https://example.com/lora1.safetensors",
+        scale: 0.8,
+      },
+    ],
   });
 
   while (true) {

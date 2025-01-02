@@ -14,6 +14,13 @@ async function main() {
     model: "playground2.5",
     positive_prompt: "Naruto logo as a sticker, minimalist",
     webhook_url: "https://webhook.site/a433f22f-028a-4da9-b435-619d8f4cd141",
+    enhance_prompt: true,
+    loras: [
+      {
+        url: "https://example.com/lora1.safetensors",
+        scale: 0.8,
+      },
+    ],
   });
 
   for await (const event of cozy.text2Media.streamEvents(id)) {

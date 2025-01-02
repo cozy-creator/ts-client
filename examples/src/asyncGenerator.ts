@@ -16,6 +16,17 @@ async function main() {
       positive_prompt: "score_9, score_8_up, score_7_up, an anime woman",
       negative_prompt: "low quality, worst quality, watermark, blurry, text",
       webhook_url: "https://webhook.site/a433f22f-028a-4da9-b435-619d8f4cd141",
+      enhance_prompt: true,
+      loras: [
+        {
+          url: "https://example.com/lora1.safetensors",
+          scale: 0.8,
+        },
+        {
+          url: "https://example.com/lora2.safetensors",
+          scale: 1.0,
+        },
+      ],
     });
 
     for await (const event of stream) {

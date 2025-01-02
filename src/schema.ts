@@ -29,6 +29,13 @@ export const text2MediaRequest = z.object({
   random_seed: z.number().optional(),
   aspect_ratio: aspectRatio.optional(),
   webhook_url: z.string().optional(),
+  enhance_prompt: z.boolean().optional(),
+  loras: z.array(
+    z.object({
+      url: z.string(),
+      scale: z.number(),
+    })
+  ).optional(),
 });
 
 // Base event structure
